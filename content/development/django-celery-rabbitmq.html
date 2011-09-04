@@ -1,0 +1,188 @@
+---
+title: Periodic Tasks and Queue Processing in Django with Celery and RabbitMQ
+description: Periodic Tasks and Queue Processing in Django with Celery and RabbitMQ 
+created: !!timestamp '2011-09-03 18:00:00'
+keywords: django-notification, django-mailer, Celery, RabbitMQ
+subtitle: Django and Celery in a nutshell
+tags:
+    - django
+    - python
+---
+{% mark image -%}
+
+![Celery]([[!!images/celery_128.png]])
+
+{%- endmark %}
+
+{% mark excerpt -%}
+In Python/Django [Celery](http://celeryproject.org/) with [RabbitMQ](http://www.rabbitmq.com/) is widely used for background processing  or distributed
+task queue. Although Celery is really focused on being a distributed task queue, it can
+also be used as scheduler using it's  periodic tasks feature celerybeat which kicks
+off tasks at regular intervals.
+{%- endmark %}
+
+
+
+Installing
+----------
+
+Installing Celery and RabbitMQ is quite easy.
+
+First install RabbitMQ, add a new user and remove guest user. To use celery we need
+to create a virtual host and allow new user access to that virtual host:
+
+{% syntax sh %}
+sudo apt-get install rabbitmq-server
+sudo rabbitmqctl add_user new_user new_password
+sudo rabbitmqctl delete_user guest
+sudo rabbitmqctl add_vhost myvhost
+sudo rabbitmqctl set_permissions -p myvhost new_user ".*" ".*" ".*"
+{% endsyntax %}
+
+If you don't want to use RabbitMQ then you can use Redis, MangoDB or Django Database.
+For more information see [other broker types][].
+
+Then install, Celery and django-celery,
+
+{% syntax sh %}
+sudo pip install celery django-celery
+{% endsyntax %}
+
+Using Celery in Djngo
+---------------------
+
+
+Add <code>djcelery</code> to <code>INSTALLED_APPS</code>. Then add the following
+lines to <code>settings.py</code>
+{% syntax python %}
+import djcelery
+djcelery.setup_loader()
+{% endsyntax %}
+Synchronize the celery database tables::
+{% syntax sh %}
+python manage.py syncdb
+{% endsyntax %}
+Configure the broker settings, by adding the following to your <code>settings.py</code>
+{% syntax python %}
+BROKER_HOST = "localhost"
+BROKER_PORT = 5672
+BROKER_USER = "new_user"
+BROKER_PASSWORD = "new_password"
+BROKER_VHOST = "myvhost"
+# List of modules to import when celery starts.
+CELERY_IMPORTS = ("myapp.tasks", )
+{% endsyntax %}
+Use corresponding commands to manage the tasks,
+{% syntax sh %}
+python manage.py celeryd
+python manage.py celerybeat
+python manage.py camqadm
+python manage.py celeryev
+{% endsyntax %}
+
+If you are using mod_wsgi in production then you should also add following to .wsgi
+file,
+{% syntax python %}
+import os
+os.environ["CELERY_LOADER"] = "django"
+{% endsyntax %}
+
+Use Cases
+---------
+
+###1. djnago-notification
+
+[djnago-notification] [] in blocking mode can make your application very slow. To queue all notifications add following in settings.py
+{% syntax python %}
+NOTIFICATION_QUEUE_ALL = True
+{% endsyntax %}
+Normally you can use,
+{% syntax sh %}
+python manage.py emit_signals
+{% endsyntax %}
+
+###2. django-mailer 
+django-mailer is asynchronous.After putting mail on the queue you need to periodically
+tell it to clear the queue and actually send the mail using,
+{% syntax sh %}
+python manage.py send_mail
+{% endsyntax %}
+
+### Solution using Celery and RabbitMQ
+A better way will be to run Celery tasks in beat mode, so create a <code>tasks.py</code> in
+project root folder (same level to <code>settings.py</code>)
+
+~~~python~~~
+from celery.task.schedules import crontab
+from celery.decorators import periodic_task
+# Get django-mailer management function to fire notification queue
+from notification.engine import send_all
+# Get django-mailer management function to fire mail queue
+from mailer.engine import send_all as send_all_mail
+
+# this will run every minute, * is every
+@periodic_task(run_every=crontab(hour="*", minute="*", day_of_week="*"))
+def project_tasks():    
+    send_all()
+    send_all_mail()
+~~~~~~~~
+
+Now run the celery daemon <code>celeryd </code> in "beat" mode (-B). You can also run celery daemon in
+background mode with  <code>celeryd_detach</code>
+{% syntax sh %}
+sudo ./manage.py celeryd -v 2 -B -s celery -E -l INFO
+sudo ./manage.py celeryd_detach -B -s celery -E -l INFO
+{% endsyntax %}
+
+Running celeryd as a daemon using init script
+---------------------------------------------
+Although you can use celeryd_detach to run celeryd daemon in background, but in
+production environment you are better with init scripts as you can start and stop
+the deamon when you want. Download init script for [celeryd][] and create the file
+<code>/etc/init.d/celeryd</code> add content of downloaded script to it and make it
+executable.
+
+{% syntax sh %}
+sudo nano /etc/init.d/celeryd
+sudo chmod +x /etc/init.d/celeryd
+Usage:	/etc/init.d/celeryd {start|stop|restart|status}
+{% endsyntax %}
+Now create configuration file: <code>/etc/default/celeryd</code> and add following,
+{% syntax sh %}
+# Name of nodes to start, here we have a single node
+CELERYD_NODES="w1"
+# or we could have multiple nodes:
+#CELERYD_NODES="w1 w2 w3"
+
+# Where to chdir at start.
+#CELERYD_CHDIR="/home/abhi/GIT-DO-NOT-DELETE/biznecto/"
+CELERYD_CHDIR="/your/django/project/"
+
+# Name of the projects settings module.
+export DJANGO_SETTINGS_MODULE="settings"
+
+# How to call "manage.py celeryd_multi"
+CELERYD_MULTI="$CELERYD_CHDIR/manage.py celeryd_multi"
+
+# Extra arguments to celeryd
+CELERYD_OPTS="--time-limit=300 --concurrency=8 -B -s celery -E -l INFO"
+
+# Name of the celery config module.
+#CELERY_CONFIG_MODULE="celeryconfig"
+
+# %n will be replaced with the nodename. You should create corresponding folders
+#CELERYD_LOG_FILE="/var/log/celery/%n.log"
+#CELERYD_PID_FILE="/var/run/celery/%n.pid"
+
+# Workers should run as an unprivileged user. Avoid running as sudo user.
+#CELERYD_USER="celery"
+#CELERYD_GROUP="celery"
+
+{% endsyntax %}
+
+[djnago-notification]: http://github.com/jtauber/django-notification/
+[django-mailer]: http://github.com/jtauber/django-mailer/
+[RabbitMQ]:http://www.rabbitmq.com/
+[Celery]:http://celeryproject.org/
+[other broker types]:http://ask.github.com/celery/tutorials/otherqueues.html
+[celeryd]:http://github.com/ask/celery/blob/master/contrib/generic-init.d/celeryd

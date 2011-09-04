@@ -1,0 +1,87 @@
+// Colors
+
+// Links
+@linkColor:         #0069d6;
+@linkColorHover:    darken(@linkColor, 10);
+
+// Grays
+@black:             #000;
+@grayDark:          lighten(@black, 25%);
+@gray:              lighten(@black, 50%);
+@grayLight:         lighten(@black, 75%);
+@grayLighter:       lighten(@black, 90%);
+@white:             #fff;
+@bodyback :         #D1D8DD;
+
+
+// Accent Colors
+@topbar:            #233645;
+@blue:              #049CDB;
+@blueDark:          #0064CD;
+@green:             #46a546;
+@red:               #9d261d;
+@yellow:            #ffc40d;
+@orange:            #f89406;
+@pink:              #c3325f;
+@purple:            #7a43b6;
+
+//Link Colors
+@link: #19B244;
+@linkhover:#CB2027;
+@linkfooter: #233645;
+
+// Listing
+@listing-link: #3C619E;
+@listing-back: #ededed;
+@listing-bord: #C3C3C3;
+@listing-colo: #3C3C3C;
+
+// Input placeholder text
+.placeholder(@color: @grayLight) {
+  :-moz-placeholder {
+    color: @color;
+  }
+  ::-webkit-input-placeholder {
+    color: @color;
+  }
+}
+
+// Selection colours (easy to forget)
+
+::selection 	 	{background: rgb(255,255,158);}
+::-moz-selection 	{background: rgb(255,255,158);}
+img::selection 		{background: transparent;}
+img::-moz-selection	{background: transparent;}
+body {-webkit-tap-highlight-color: rgb(255,255,158);}
+
+h1, h2  {
+    color:@topbar; 
+}
+
+h3 {
+    color:@link;
+}
+
+body {
+    background-color: @bodyback;
+    color: @topbar;
+}
+
+#container {
+    background-color: @white;
+}
+
+a, a:visited { color: @link; text-decoration: none; }
+a:hover { color: @linkhover; }
+
+footer {
+    border-top: 10px solid #BDC3C7;
+    padding: 20px;
+    a, a:visited { color: @linkfooter;  }
+    a:hover { color:  @linkhover;}
+}
+code{
+    font-weight:normal;
+    background:@grayLighter;
+    padding:2px;
+}

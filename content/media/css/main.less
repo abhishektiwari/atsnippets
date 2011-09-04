@@ -1,0 +1,369 @@
+@import 'reset.less';
+@import 'grid.less';
+@import 'typography.less';
+@import 'colors.less';
+@import 'mixin.less';
+@import 'topbar.less';
+@import 'pagination.less';
+@import 'code.less';
+
+//////////
+// GRID //
+//////////
+
+// Specify the number of columns and set column and gutter widths
+@columns: 12;
+@column-width: 60;
+@gutter-width: 20;
+
+// Remove the definition below for a pixel-based layout
+@total-width: 100%;
+
+
+////////////
+// LAYOUT //
+////////////
+
+
+// Center the contents
+div.center, div.topbar-center {
+	max-width: 992px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+// Responsive media elements 
+img, embed, object, video {
+	max-width: 100%
+}
+
+// header
+header {
+	margin-bottom: 1em;
+}
+
+// Hide nav select
+.topbar nav select {
+  display: none;
+}
+
+.splash {
+	text-align: center;
+	text-shadow: #F0EFEF 0 -1px 0;
+	font-family: 'IM Fell English' !important;
+	h1, p {
+		font-style: italic;
+	}
+	p{
+		font-size:1.2em;
+		line-height:2em;
+	}
+	em {
+		font-size:1.2em;
+	}
+	a{ padding:2px;	}
+}
+
+.social-buttons {
+	margin-top: 2em;
+}
+
+.content {
+	margin-bottom:5em;
+	margin-top:5em;
+}
+
+hr.style1, hr.style2, hr.style3 {
+	border: 0;
+	border-bottom: 1px dashed @gray;
+}
+hr.style2 {
+	margin-top:3em;
+	margin-bottom:3em;
+}
+hr.style3 {
+	margin-top:2em;
+	margin-bottom:1em;
+	clear:both;
+}
+hr.style4 {
+	margin-top:1em;
+	margin-bottom:1em;
+	display:none;
+}
+em {
+	line-height:2em;
+}
+// main column & sidebar
+article {
+	.column(9);
+}
+aside {
+	.column(3);
+}
+
+.hyphenate {
+	ul {
+		display: block;
+		list-style-type: disc;
+		margin-left:4em;
+	}
+	ul  li {
+		line-height:1.5;
+		padding:5px;
+	}
+}
+// Blog Post related
+.title, .subtitle {
+	padding-left:0em;
+	text-transform: capitalize;
+}
+.subtitle {
+	padding-bottom:1em;
+	color:@gray
+}
+ul.tags{
+	font-size: 1em;
+    margin-bottom: 2em;
+    text-align: left;
+}
+ul.tags li{
+    list-style-type: none;
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+}
+//ul.tags li:nth-child(3):after { content:"\A"; white-space:pre; }
+ul.tags li a{
+    color: @linkhover;
+    text-decoration: none;
+}
+
+h1.tag:before,
+ul.tags li a:before{
+    content: '\00AB';
+}
+
+h1.tag:after,
+ul.tags li a:after{
+    content: '\00BB';
+}
+
+ul.tags li a:hover{
+    color: @link;
+}
+
+article.post p{
+    font-size: 1em;
+    line-height: 2em;
+	margin: 1em 0;
+}
+
+article.post img{
+    display: block;
+    margin-bottom: 2em;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+
+// Archives
+.archives ul.posts{
+
+}
+
+.archives li.post{
+    list-style-type: none;
+}
+
+.archives li.post time{
+    color: @gray;
+
+}
+
+.list-time {
+	.column(3);
+	margin-bottom:0.5em;
+	padding-bottom:2px;
+}
+.list-title {
+	.column(9);
+	margin-bottom:0.5em;
+	padding-bottom:2px;
+}
+list-tags {
+	.column(12);
+}
+
+.archives li.post a{
+	float:left;
+}
+
+.archives ul.tags{
+	text-align:right;
+	margin-bottom:0.5em;
+	padding-left:1em;
+	border-bottom:1px dashed @gray;
+	padding-bottom:2px;
+}
+// Listing
+
+.listing{
+    margin-top: 2em;
+	margin-left:.2em;
+}
+h1.listing {
+	padding-left:.2em !important;
+}
+.listing img{
+    width: 120px;
+    height: 120px;
+	align:center;
+}
+
+.listing li{
+    background-color: @listing-back;
+	border: 1px solid @listing-bord;
+	.border-radius;
+    list-style-type: none;
+    float: left;
+    //width: 272px;
+	width:column(3);
+	min-height:450px;
+    margin-right: 1em;
+    margin-bottom: 1em;
+    padding: 1em;
+	a, a:visited {
+		background:@topbar;
+		color:@white;
+	}
+	a:hover{
+		text-shadow: @topbar 0 -1px 0;
+		background:@linkhover;
+		color:@white;
+	}
+	article {
+		width:260px;
+	}
+}
+
+.listing li:nth-child(3){
+    margin-right: 0;
+}
+
+.listing li:nth-child(4){
+    clear: left;
+}
+
+.listing li p{
+    font-size: 1em;
+    line-height: 1.5em;
+    margin-bottom: 1em;
+	margin-right:0em !important;
+	text-align:justify;
+	color:@listing-colo;
+}
+
+
+.listing h3{
+    font-size: 1.5em;
+    line-height: 1.3em;
+    margin-bottom: 6px;
+}
+
+.listing time{
+    display:block;
+    border-top: 1px solid @listing-bord;
+    padding-top: 4px;
+    font-size: 10px;
+	color:@listing-colo;
+}
+
+
+
+// Footer
+footer{
+	.credits {font-size: .9em; float: left; .column(6); }
+	.copyright {font-size: .9em; text-align: right; .column(6);}
+}
+
+
+//Common for all
+// Dont display the normal nav when 0px-599px wide
+@media only screen and (min-width: 0px) and (max-width: 599px) {
+	.topbar > nav ul li { display: none !important; }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 599px){
+  	.topbar > nav select {
+		display: inline-block;
+		zoom: 1;
+		*display: inline;
+		margin-bottom:10px;
+		border: 1px solid white;
+		.border-radius(3px);
+		background-color: white;
+	}
+}
+@media only screen and (min-width: 250px) and (max-width: 479px) {
+  	.topbar > nav select {
+		display: inline-block;
+		zoom: 1;
+		*display: inline;
+		margin-bottom:10px;
+		border: 1px solid white;
+		.border-radius(3px);
+		background-color: white;
+	}
+}
+@media only screen and (min-width: 250px) and (max-width: 767px) {
+	.list-time, .list-title, .list-tags, article,
+	aside {
+		.column(12);
+		margin-bottom: 1em;
+	}
+	footer{
+		.credits {font-size: .8em; text-align: center; .column(12); margin-bottom: 1em;}
+		.copyright {font-size: .8em; text-align: center; .column(12);}
+	}
+	hr.style4 {
+		display:block;
+	}
+}
+
+
+//Mobile Layout: 250px-320px-479px
+@media only screen and (min-width: 250px) and (max-width: 479px) {
+	.social-buttons {
+		display:none;
+	}
+	nav.pagination {
+		font-size:0.8em;
+	}
+	article h1 {
+		font-size:1.5em;
+	}
+
+	.splash {
+		h1 {font-size: 1.5em;}
+		em, p {
+			font-size: 1.0em;
+			padding-top:2px;
+			padding-bottom:3px;
+		}
+	}
+}
+//Wide Mobile Layout: 480px-767px
+@media only screen and (min-width: 480px) and (max-width: 599px) {
+
+}
+
+//Wide Mobile Layout: 480px-599px
+@media only screen and (min-width: 480px) and (max-width: 599px) {
+
+}
+
+// Tablet Layout: 768px-991
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+}

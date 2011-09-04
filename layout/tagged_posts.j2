@@ -1,0 +1,42 @@
+{% extends "base.j2" %}
+
+{% block title_meta %}
+<title>{{ tag.name }} | AtSnippets</title>
+<meta name="description" content="Posts related to {{ tag.name }}">
+<meta name="author" content="Abhishek Tiwari">
+<meta name="keywords" content="{{ tag.name }}">
+<!--  Mobile viewport optimized: j.mp/bplateviewport -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+{% endblock %}
+{% block main %}
+<section class="archives">
+<h1 class="tag title">{{ tag.name }}</h1>
+<ul class="posts clear">
+{% for resource in walker() -%}
+<li class="post clear">
+    <div class="list-time">
+    <time datetime="{{ resource.meta.created.strftime('%Y-%m-%d') }}">
+        &#8986; {{ resource.meta.created.strftime('%a, %d %b %Y') }}
+    </time>
+    </div>
+    <div class="list-title">
+    <a href="{{ content_url(resource.url) }}"> &rarr; {{ resource.meta.title }}</a>
+    </div>
+    <div class="list-tags">
+    {% if resource.meta.tags %}
+    <ul class="tags">
+    {% for tag in resource.meta.tags %}
+    <li>
+        <a class="small" href="{{ content_url('tags/'~tag~'.html') }}">
+           {{ tag }}
+        </a>
+    </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    </div>
+</li>
+{%- endfor %}
+</ul>
+</section>
+{% endblock %}
