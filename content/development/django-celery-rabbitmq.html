@@ -22,6 +22,7 @@ off tasks at regular intervals.
 {%- endmark %}
 
 
+[TOC]
 
 Installing
 ----------
@@ -52,8 +53,8 @@ Using Celery in Djngo
 ---------------------
 
 
-Add <code>djcelery</code> to <code>INSTALLED_APPS</code>. Then add the following
-lines to <code>settings.py</code>
+Add `djcelery` to `INSTALLED_APPS`. Then add the following
+lines to `settings.py`
 {% syntax python %}
 import djcelery
 djcelery.setup_loader()
@@ -62,7 +63,7 @@ Synchronize the celery database tables::
 {% syntax sh %}
 python manage.py syncdb
 {% endsyntax %}
-Configure the broker settings, by adding the following to your <code>settings.py</code>
+Configure the broker settings, by adding the following to your `settings.py`
 {% syntax python %}
 BROKER_HOST = "localhost"
 BROKER_PORT = 5672
@@ -109,8 +110,8 @@ python manage.py send_mail
 {% endsyntax %}
 
 ### Solution using Celery and RabbitMQ
-A better way will be to run Celery tasks in beat mode, so create a <code>tasks.py</code> in
-project root folder (same level to <code>settings.py</code>)
+A better way will be to run Celery tasks in beat mode, so create a `tasks.py` in
+project root folder (same level to `settings.py`)
 
 ~~~python~~~
 from celery.task.schedules import crontab
@@ -127,8 +128,8 @@ def project_tasks():
     send_all_mail()
 ~~~~~~~~
 
-Now run the celery daemon <code>celeryd </code> in "beat" mode (-B). You can also run celery daemon in
-background mode with  <code>celeryd_detach</code>
+Now run the celery daemon `celeryd ` in "beat" mode (-B). You can also run celery daemon in
+background mode with  `celeryd_detach`
 {% syntax sh %}
 sudo ./manage.py celeryd -v 2 -B -s celery -E -l INFO
 sudo ./manage.py celeryd_detach -B -s celery -E -l INFO
@@ -139,7 +140,7 @@ Running celeryd as a daemon using init script
 Although you can use celeryd_detach to run celeryd daemon in background, but in
 production environment you are better with init scripts as you can start and stop
 the deamon when you want. Download init script for [celeryd][] and create the file
-<code>/etc/init.d/celeryd</code> add content of downloaded script to it and make it
+`/etc/init.d/celeryd` add content of downloaded script to it and make it
 executable.
 
 {% syntax sh %}
@@ -147,7 +148,7 @@ sudo nano /etc/init.d/celeryd
 sudo chmod +x /etc/init.d/celeryd
 Usage:	/etc/init.d/celeryd {start|stop|restart|status}
 {% endsyntax %}
-Now create configuration file: <code>/etc/default/celeryd</code> and add following,
+Now create configuration file: `/etc/default/celeryd` and add following,
 {% syntax sh %}
 # Name of nodes to start, here we have a single node
 CELERYD_NODES="w1"

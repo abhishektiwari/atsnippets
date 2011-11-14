@@ -72,6 +72,9 @@ markdown:
     extensions:
         - def_list
         - headerid
+        - toc
+        - footnotes
+        - fenced_code
 tagger:
     sorter: time
     archives:
